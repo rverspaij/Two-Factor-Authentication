@@ -22,7 +22,7 @@ const htmlLogin = `
 func login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		// Get the username and password from the form
-		username := r.FormValue("gebruiker")
+		username := r.FormValue("user")
 		password := r.FormValue("password")
 
 		checker := checkLogin(username, password)
