@@ -40,10 +40,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func checkLogin(username string, password string) (bool, error) {
-	var correct bool
-	correct = true
-	return correct, nil
+func checkLogin(username string, password string) bool {
+	correct := true
+	return correct
 
 }
 
