@@ -3,6 +3,10 @@
 
 name: Go package
 
+concurrency:
+  group: Test
+  cancel-in-progress: true
+
 on: [push]
 
 jobs:
@@ -11,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ '1.14', '1.15', '1.16.x' ]
+        go-version: [ '1.16.x' ]
         
     steps:
       - uses: actions/checkout@v3
