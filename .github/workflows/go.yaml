@@ -30,7 +30,7 @@ jobs:
           go build -v ./...
         
       - name: Manual check
-        uses: peter-evans/wait-on-check@v1.4.0
+        uses: peter-evans/check.txt@v1.4.0
         with:
           path: check.txt
           
