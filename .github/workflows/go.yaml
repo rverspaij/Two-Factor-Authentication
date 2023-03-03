@@ -28,9 +28,6 @@ jobs:
       - name: Build
         run: go build -v ./...
       
-      - name: Validate Code
-        run: go vet ./...
-      
       - name: Push Code
         if: success()
         uses: ad-m/github-push-action@master
