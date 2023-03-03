@@ -5,35 +5,37 @@ on: [push]
 jobs:
   build-and-validate:
     runs-on: ubuntu-latest
-    environment: Test
     strategy:
       matrix:
         go-version: ['1.18.x']
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2
+      
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-
+      
       - name: Install dependencies
         run: go get .
-
+      
       - name: Build
         run: go build -v ./...
-
+            
       - name: Manual Check
-        run: echo "Please perform a manual check"
-
-      - name: Push Code
-        if: github.event_name == 'push' && success()
-        env:
-          TARGET_BRANCH: "Test"
         run: |
-          git checkout -b $TARGET_BRANCH || git checkout $TARGET_BRANCH
-          git add .
-          git commit -m "Automated commit from GitHub Actions"
-          git push -u origin $TARGET_BRANCH
+          echo "Please check the build output"
+          read -p "Proceed with deployment? (y/n): " choice
+          if [ "$choice" == "y" ]; then
+            echo "Pushing code to the production environment..."
+            git config --global user.email "actions@github.com"
+            git config --global user.name "GitHub Actions"
+            echo "Deployment successful!"
+            git push origin main
+          else
+            echo "Deployment aborted."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
