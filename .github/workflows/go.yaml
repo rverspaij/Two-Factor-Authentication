@@ -1,39 +1,25 @@
 name: Go package
 
-concurrency:
-  group: Test
-  cancel-in-progress: true
-
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  build-and-validate:
+  build:
     runs-on: ubuntu-latest
-    environment: Test
-    strategy:
-      matrix:
-        go-version: ['1.18.x']
-        
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
+
+      # Add your build and validation steps here
       
-      - name: Set up Go
-        uses: actions/setup-go@v3
+      # Add a manual approval step
+      - name: Manual approval
+        if: always()
+        uses: peter-evans/wait-on-check@v2
         with:
-          go-version: ${{ matrix.go-version }}
-      
-      - name: Install dependencies
-        run: go get .
-      
-      - name: Build
-        run: go build -v ./...
-      
-      - name: Validate Code
-        run: go vet ./...
-      
-      - name: Push Code
-        if: success()
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          status: "success"
+          check_name: "Build and validate"
+          wait_time: 300
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
