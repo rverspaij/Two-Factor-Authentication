@@ -9,32 +9,25 @@ on: [push]
 jobs:
   build-and-validate:
     runs-on: ubuntu-latest
-    env:
-      GO111MODULE: "on"
-      GOROOT: /usr/local/go
-      GOPATH: ${{ runner.workspace }}/go
-      PATH: ${{ env.GOROOT }}/bin:${{ env.GOPATH }}/bin:${{ env.PATH }}
+    environment: Test
     strategy:
       matrix:
         go-version: ['1.18.x']
         
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
+      - uses: actions/checkout@v3
+      
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
-          
-      - name: Install dependencies
-        run: go mod download
       
-      - name: Build
-        run: go build -v ./...
-        
-      - name: Create check.txt
-        run: echo "Please verify that everything is working correctly." > check.txt
+      - name: Install dependencies
+        run: go get .
+      
+      - name: Build and validate
+        run: |
+          go build -v ./...
         
       - name: Manual check
         uses: peter-evans/wait-on-check@v1.4.0
