@@ -1,9 +1,6 @@
 name: Go package with manual check
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   build-and-validate:
