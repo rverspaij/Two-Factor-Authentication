@@ -1,49 +1,47 @@
 name: Go package
 
-concurrency:
-  group: Test
-  cancel-in-progress: true
-
-on: [push]
+on:
+  push:
+    branches: [ main ]
 
 jobs:
   build-and-validate:
     runs-on: ubuntu-latest
-    environment: Test
+    env:
+      GO111MODULE: "on"
+      GOROOT: /usr/local/go
+      GOPATH: ${{ runner.workspace }}/go
+      PATH: ${{ env.GOROOT }}/bin:${{ env.GOPATH }}/bin:${{ env.PATH }}
     strategy:
       matrix:
         go-version: ['1.18.x']
         
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-      
+          
       - name: Install dependencies
-        run: go get .
+        run: go mod download
       
       - name: Build
-        run: |
-          go build -v ./...
-      
-      # Add a manual approval step
-      - name: Manual approval
-        if: always()
-        uses: peter-evans/wait-on-check@v2
+        run: go build -v ./...
+        
+      - name: Create check.txt
+        run: echo "Please verify that everything is working correctly." > check.txt
+        
+      - name: Manual check
+        uses: peter-evans/wait-on-check@v1.4.0
         with:
-          status: "success"
-          check_name: "Manual approval"
-          wait_time: 300
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      # Add a step to push the code if the check is approved
+          path: check.txt
+          
       - name: Push code
-        if: always() && success()
-        run: |
-          git add .
-          git commit -m "Update code"
-          git push
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          branch: main
+          directory: ./
+          github_token: ${{ secrets.GITHUB_TOKEN }}
