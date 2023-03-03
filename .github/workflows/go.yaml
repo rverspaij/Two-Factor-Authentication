@@ -1,8 +1,10 @@
 name: Go package
 
-on:
-  push:
-    branches: [ main ]
+concurrency:
+  group: Test
+  cancel-in-progress: true
+
+on: [ main ]
 
 jobs:
   build-and-validate:
