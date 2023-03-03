@@ -31,9 +31,9 @@ jobs:
       - name: Push Code
         if: github.event_name == 'push' && success()
         env:
-          TARGET_BRANCH: "production"
+          TARGET_BRANCH: "Test"
         run: |
-          git checkout -b $Test || git checkout $Test
+          git checkout -b $TARGET_BRANCH || git checkout $TARGET_BRANCH
           git add .
           git commit -m "Automated commit from GitHub Actions"
-          git push -u origin $Test
+          git push -u origin $TARGET_BRANCH
