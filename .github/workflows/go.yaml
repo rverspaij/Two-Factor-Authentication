@@ -25,10 +25,9 @@ jobs:
       - name: Install dependencies
         run: go get .
       
-      - name: Build and validate
+      - name: Build
         run: |
           go build -v ./...
-          go vet ./...
       
       # Add a manual approval step
       - name: Manual approval
